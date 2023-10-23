@@ -72,6 +72,40 @@ const draw = () => {
     // ctx.value.lineTo(200, 50)
     // ctx.value.stroke()
 
+    // 透明度
+    // ctx.value.beginPath()
+    // ctx.value.fillStyle = "rgba(155,241,244,0.2)"
+    // ctx.value.fillRect(10, 10, 100, 100)
+    // ctx.value.closePath()
+
+    // 线性渐变
+    // var gradient1 = ctx.value.createLinearGradient(10, 10, 300, 10)
+    // gradient1.addColorStop(0, '#00ff00')
+    // gradient1.addColorStop(1, '#ff0000')
+    // ctx.value.fillStyle = gradient1
+    // ctx.value.fillRect(10,10,300,100)
+
+    // 镜像渐变
+    // var gradient1 = ctx.value.createRadialGradient(100,100,100,100,100,0)
+    // gradient1.addColorStop(0, "#ff770f");
+    // gradient1.addColorStop(1, "#ffffff");
+    // ctx.value.fillStyle = gradient1
+    // ctx.value.fillRect(10, 10, 200, 200);
+
+    // let img = new Image()
+    // img.src = './assets/logo_rhine.png'
+    // img.onload = () => {
+    //   if (ctx.value) {
+    //     let pattern = ctx.value.createPattern(img, 'repeat')
+    //     ctx.value.fillStyle = pattern
+    //     ctx.value.fillRect(0, 0, 300, 300)
+    //   }
+    // }
+
+    // 绘制文本 font textAlign direction
+    ctx.value.font = '50px serif'
+    ctx.value.strokeText('Canvas 详解', 50, 50)
+    ctx.value.fillText('Canvas 详解', 50, 150)
 
     
 
