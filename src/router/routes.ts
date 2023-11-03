@@ -10,7 +10,19 @@ const routes = [
   {
     path: "/saveImage",
     component: () => import("@/views/SaveImage.vue")
-  }
+  },
+  {
+    path: "/theme",
+    component: () => import("@/views/Theme.vue")
+  },
+  {
+    path: "/ticket",
+    component: () => import("@/views/ScratchTicket.vue")
+  },
+  {
+    path: "/blur",
+    component: () => import("@/views/GaussianBlur.vue")
+  },
 ]
 
 export default routes;

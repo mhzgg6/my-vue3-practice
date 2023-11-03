@@ -1,6 +1,11 @@
 <script setup lang="ts">
+// import { log } from 'console';
 import { ref, onMounted } from 'vue'
 
+interface ClickCoordinate {
+  x: number;
+  y: number;
+}
 interface ImgItem {
   name: string;
   url: string
@@ -37,10 +42,12 @@ const images: Array<ImgItem> = [
     url: "https://img1.baidu.com/it/u=3907076642,679964949&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=293",
   }
 ]
+const clickCoordinate:ClickCoordinate = { x: 0, y: 0 } 
 
 const chess_canvas = ref<HTMLCanvasElement | null>(null)
 const ctx = ref<CanvasRenderingContext2D | null>(null)
 const imagesData:Array<ImgObj> = [] 
+let target: number;
 
 const createImgs = () => {
   images.forEach(item => {
@@ -71,8 +78,29 @@ const draw = (imgObj: ImgObj) => {
   }
 }
 
+const checkElement = () => {
+  imagesData.forEach((item: ImgObj, index: number) => {
+    draw(item)
+    if (ctx.value?.isPointInPath(clickCoordinate.x, clickCoordinate.y)) {
+      target = index
+      console.log("点击的元素是：", item.name);
+    }
+  })
+}
+
+const mousedownFn = (e: MouseEvent) => {
+  // 获取当前点击坐标
+  clickCoordinate.x = e.pageX - chess_canvas.value.offsetLeft
+  clickCoordinate.y = e.pageY - chess_canvas.value.offsetTop
+  console.log(clickCoordinate);
+  checkElement()
+}
+// const mousemoveFn = (e: MouseEvent) => {}
+// const mouseupFn = (e: MouseEvent) => {}
+
 onMounted(() => {
   if (chess_canvas.value) {
+    chess_canvas.value.addEventListener('mousedown', mousedownFn, false)
     ctx.value = chess_canvas.value.getContext('2d')
     createImgs()
   }
