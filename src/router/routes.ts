@@ -23,6 +23,10 @@ const routes = [
     path: "/blur",
     component: () => import("@/views/GaussianBlur.vue")
   },
+  {
+    path: "/snake",
+    component: () => import("@/views/gluttonousSnake/index.vue")
+  },
 ]
 
 export default routes;
