@@ -1,16 +1,25 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { gameConfig } from "./baseData"
+import { initSnake, moveSnake, handleKeydownFn } from "./snake"
 
 const width: number = 1000,
       height: number = 500;
 
 const chess_canvas = ref<HTMLCanvasElement | null>(null)
-const ctx = ref<CanvasRenderingContext2D | null>(null) 
+
+const init = () => {
+  initSnake()
+  // moveSnake()
+  // setInterval(moveSnake, 300)
+  // rect.drawRect(ctx)
+}
 
 onMounted(() => {
   if (chess_canvas.value) {
-    ctx.value = chess_canvas.value.getContext('2d')
-    // draw()
+    gameConfig.ctx = chess_canvas.value.getContext('2d') as CanvasRenderingContext2D
+    document.addEventListener('keydown', handleKeydownFn, false)
+    init()
   }
 })
 

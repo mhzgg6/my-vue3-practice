@@ -54,7 +54,7 @@ const draw = () => {
   if (ball.x + ball.vx > height || ball.x + ball.vx < 0) {
     ball.vx = -ball.vx
   }
-  // window.requestAnimationFrame(draw)
+  window.requestAnimationFrame(draw)
 }
 
 onMounted(() => {
