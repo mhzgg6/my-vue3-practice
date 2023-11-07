@@ -14,24 +14,26 @@ const snakeHead: SnakeInfo = {
   color: 'red'
 }
 const snakeBody: SnakeInfo[] = [
-  { x: startPoints.x - 22, y: startPoints.y, color: 'skyblue' },
-  { x: startPoints.x - 44, y: startPoints.y, color: 'skyblue' },
+  { x: startPoints.x - 20, y: startPoints.y, color: 'green' },
+  { x: startPoints.x - 40, y: startPoints.y, color: 'green' },
 ]
+const foodPosition = { x: 0, y: 0 }
+let isEatFood = false
 
 function initSnake() {
   drawSnake()
 }
 
 function drawSnake() {
+  console.log(snakeHead);
+  
+  drawRect(snakeHead)
+  for (let i = 0; i < snakeBody.length; i ++) {
+    drawRect(snakeBody[i])
+  }
   if (isCollision()) {
     alert('你死了')
     return
-  }
-
-  drawRect(snakeHead)
-
-  for (let i = 0; i < snakeBody.length; i ++) {
-    drawRect(snakeBody[i])
   }
 }
 
@@ -47,30 +49,34 @@ function moveSnake() {
   const { ctx } = gameConfig
   let { x, y } = snakeHead
   ctx.clearRect(0,0,1000,500)
-  const firstNode = { x, y, color: 'skyblue' }
+  const firstNode = { x, y, color: 'green' }
   switch(direction) {
     case 'right':
-      x += 22
+      x += 20
       snakeHead.x = x
       break
     case 'down':
-      y += 22
+      y += 20
       snakeHead.y = y
       break
     case 'left':
-      x -= 22
+      x -= 20
       snakeHead.x = x
       break
     case 'up':
-      y -= 22
+      y -= 20
       snakeHead.y = y
       break
   }
-  snakeBody.pop()
   snakeBody.unshift(firstNode)
-  drawSnake()  
-  console.log(111);
-  
+  isEatFood = snakeHead.x === foodPosition.x && snakeHead.y === foodPosition.y
+  if (isEatFood) {
+    randomFood()
+    isEatFood = false
+  } else {
+    snakeBody.pop()
+  }
+  drawSnake()    
 }
 
 function handleKeydownFn(e: KeyboardEvent) {
@@ -99,12 +105,47 @@ function isCollision() {
   return xCollision || yCollision || selfCollision
 }
 
+function getRandomPosition() {
+  let isInSnake = true
+  while (isInSnake) {
+    // 20的倍数
+    const randomX = Math.round(Math.random() * (1000 - 20) / 20) * 20
+    const randomY = Math.round(Math.random() * (500 - 20) / 20) * 20
+    // 判断食物是否在蛇头 蛇身
+    if ((snakeHead.x === randomX && snakeHead.y === randomY) || (snakeBody.find(({x,y}) => x === randomX && y === randomY))) {
+      isInSnake = true
+      continue
+    } else {
+      foodPosition.x = randomX
+      foodPosition.y = randomY
+      isInSnake = false
+    }
+  }
+  return isInSnake
+}
+
 function randomFood() {
-  
+  getRandomPosition()
+  drawFood()
+}
+
+function drawFood() {
+  const { ctx } = gameConfig
+  ctx.beginPath()
+  ctx.fillStyle = 'blue'
+  ctx.fillRect(foodPosition.x, foodPosition.y, size, size)
+}
+
+
+function startAnimate() {
+  moveSnake()
+  drawFood()
 }
 
 export {
   initSnake,
   moveSnake,
-  handleKeydownFn
+  handleKeydownFn,
+  randomFood,
+  startAnimate
 }

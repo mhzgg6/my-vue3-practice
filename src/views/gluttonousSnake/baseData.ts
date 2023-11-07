@@ -6,7 +6,7 @@ const snakeConfig = {
   // 速度
   speed: 3,
   // 大小
-  size: 20,
+  size: 18,
   // 初始长度
   snakeLen: 3,
   // 初始位置
