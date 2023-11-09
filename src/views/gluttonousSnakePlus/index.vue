@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { gameConfig } from "./baseData";
-import { score, initSnake, randomFood, startAnimate, stopAnimate, handleKeydownFn } from "./snake";
+import { score, loadImages, initSnake, randomFood, startAnimate, stopAnimate, handleKeydownFn } from "./snake";
 
 const width: number = 1000,
       height: number = 500;
@@ -9,9 +9,12 @@ const width: number = 1000,
 const chess_canvas = ref<HTMLCanvasElement | null>(null);
 
 const init = () => {
-  initSnake();
-  randomFood();
-  startAnimate();
+  let promiseAll  = loadImages()
+  Promise.all(promiseAll).then(() => {
+    initSnake();
+    randomFood();
+    startAnimate();
+  })
 };
 
 onMounted(() => {

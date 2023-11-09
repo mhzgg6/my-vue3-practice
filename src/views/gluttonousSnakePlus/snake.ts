@@ -3,7 +3,7 @@ import { snakeConfig, gameConfig } from "./baseData"
 interface SnakeInfo {
   x: number;
   y: number;
-  color: string;
+  size: number;
 }
 
 interface Position {
@@ -11,76 +11,119 @@ interface Position {
   y: number;
 }
 
+const directionToDeg: Map<string, number> = new Map([
+  ['upright', 90]
+])
+
 const { size, startPoints, startDirection } = snakeConfig
+const bodySize = 24
+
 let direction: string = startDirection
+let lastDirection: string = ''
 
 const snakeHead: SnakeInfo = {
-  x: startPoints.x,
-  y: startPoints.y,
-  color: 'red'
+  x: startPoints.x - 8,
+  y: startPoints.y -38,
+  size
 }
 const snakeBody: SnakeInfo[] = [
-  { x: startPoints.x - 20, y: startPoints.y, color: 'green' },
-  { x: startPoints.x - 40, y: startPoints.y, color: 'green' },
+  { x: startPoints.x, y: startPoints.y, size: bodySize },
+  { x: startPoints.x, y: startPoints.y + 16, size: bodySize },
 ]
 const foodPosition: Position = { x: 0, y: 0 }
 let isEatFood: boolean = false
 let timer: number | null = null
 let score = ref<number>(0)
-const cowHead = new Image()
-cowHead.src = '../assets/images/cow.png'
-console.log(cowHead);
 
+const urls = ['http://cdn.xjbigvision.com/cow.png', 'http://cdn.xjbigvision.com/cow-body.png']
+let promiseAll: Promise<HTMLImageElement>[] = []
+let imgs: HTMLImageElement[] = []
+
+function loadImages() {
+  for (let i = 0; i < urls.length; i ++) {
+    promiseAll[i] = new Promise((resolve, reject) => {
+      imgs[i] = new Image() as HTMLImageElement
+      imgs[i].src = urls[i]
+      imgs[i].onload = () => {
+        console.log(`第${i}张加载完成`)
+        resolve(imgs[i])
+      }
+    })
+  }
+  return promiseAll
+}
 
 function initSnake() {
   drawSnake()
 }
 
 function drawSnake() {
-  console.log(snakeHead);
+
   
   if (isCollision()) {
     alert('你死了')
     stopAnimate()
     return
   }
-  drawRect(snakeHead)
+  drawCow(snakeHead, imgs[0])
   for (let i = 0; i < snakeBody.length; i ++) {
-    drawRect(snakeBody[i])
+    drawCow(snakeBody[i], imgs[1])
   }
+
+  
 }
 
-function drawRect(snake: SnakeInfo) {
+function drawCow(snake: SnakeInfo, el: HTMLImageElement) {
   const { ctx } = gameConfig
-  const { x, y, color } = snake
+  const { x, y, size } = snake
+  const oldToNowDirection = lastDirection + direction
+  const deg = directionToDeg.get(oldToNowDirection)
   ctx.beginPath()
-  ctx.strokeStyle = color
-  ctx.strokeRect(x, y, size, size)
+  ctx.save();
+  console.log(lastDirection, direction);
+  console.log(snake);
+  if (deg) {
+    // ctx.translate(200 + size/2, 200 + size/2)
+    ctx.translate(x + size/2, y + size/2)
+    ctx.rotate(Math.PI / 180 * deg)
+    ctx.translate(-(x + size/2), -(y + size/2))
+  }
+  ctx.drawImage(el, x, y, size, size)
+  ctx.restore();
 }
 
 function moveSnake() {
   const { ctx } = gameConfig
   let { x, y } = snakeHead
-  ctx.clearRect(0,0,1000,500)
-  const firstNode = { x, y, color: 'green' }
+  // ctx.clearRect(0,0,1000,500)
+  const firstNode = { x: 0, y: 0, size: bodySize }
+  console.log(lastDirection, direction, '=-----');
+  
   switch(direction) {
     case 'right':
-      x += 20
+      // 移动身体宽度
+      firstNode.x = x + 8
+      firstNode.y = y + 38
+      x += 16
+      // y += 10      
       snakeHead.x = x
+      // snakeHead.y = y
       break
     case 'down':
-      y += 20
+      y += 16
       snakeHead.y = y
       break
     case 'left':
-      x -= 20
+      x -= 16
       snakeHead.x = x
       break
     case 'up':
-      y -= 20
+      firstNode.x = x + 9
+      firstNode.y = y + 22
+      y -= 16
       snakeHead.y = y
       break
-  }
+  }  
   snakeBody.unshift(firstNode)
   isEatFood = snakeHead.x === foodPosition.x && snakeHead.y === foodPosition.y
   if (isEatFood) {
@@ -98,15 +141,19 @@ function handleKeydownFn(e: KeyboardEvent) {
   console.log(code);
   switch (code) {
     case 'ArrowUp':
+      lastDirection = direction
       direction = 'up'
       break
     case 'ArrowDown':
+      lastDirection = direction
       direction = 'down'
       break
     case 'ArrowLeft':
+      lastDirection = direction
       direction = 'left'
       break
     case 'ArrowRight':
+      lastDirection = direction
       direction = 'right'
       break
   }
@@ -159,7 +206,10 @@ function animate() {
 }
 
 function startAnimate() {
-  timer = Number(setInterval(animate, 300))
+  lastDirection = startDirection
+  direction = 'right'
+  animate()
+  // timer = Number(setInterval(animate, 300))
 }
 
 function stopAnimate() {
@@ -169,6 +219,7 @@ function stopAnimate() {
 
 export {
   score,
+  loadImages,
   initSnake,
   moveSnake,
   handleKeydownFn,
