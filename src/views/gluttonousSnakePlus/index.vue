@@ -5,19 +5,32 @@ import { score, loadImages, initSnake, randomFood, startAnimate, stopAnimate, ha
 
 const width: number = 1000,
       height: number = 500;
-
+let muted = ref<boolean>(false)
+const bgMusic = ref<HTMLAudioElement | null>(null)
 const chess_canvas = ref<HTMLCanvasElement | null>(null);
+
+
+console.log(bgMusic);
 
 const init = () => {
   let promiseAll  = loadImages()
   Promise.all(promiseAll).then(() => {
+    // bgAudio.play()
     initSnake();
     randomFood();
     startAnimate();
   })
 };
 
+const playBg = () => {
+  if (bgMusic.value) {
+    bgMusic.value.play()
+  }
+}
+
 onMounted(() => {
+  // muted.value = false
+  // bgMusic.value?.play()
   if (chess_canvas.value) {
     gameConfig.ctx = chess_canvas.value.getContext(
       "2d"
@@ -47,6 +60,9 @@ onBeforeUnmount(() => {
     >
       当前浏览器不支持canvas元素，请升级或更换浏览器！
     </canvas>
+
+    <audio autoplay :muted="muted" ref="bgMusic" src="http://cdn.xjbigvision.com/bg.mp3"></audio>
+    <button @click="playBg">播放</button>
   </div>
 </template>
 

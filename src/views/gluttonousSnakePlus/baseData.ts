@@ -12,7 +12,7 @@ const snakeConfig = {
   // 初始长度
   snakeLen: 3,
   // 初始位置
-  startPoints: { x: 200, y: 200 },
+  startPoints: { x: 192, y: 192 },
   // 初始方向
   startDirection: 'up'
 }
