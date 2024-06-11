@@ -6,6 +6,7 @@
         ref="chess_canvas"
         :width="width"
         :height="height"
+        @click="handleCanvasClick"
       >
         当前浏览器不支持canvas元素，请升级或更换浏览器！
       </canvas>
@@ -23,10 +24,12 @@ const ctx = ref(null)
 const chess_canvas = ref(null)
 const width = 1000,
       height = 600
+const points = ref([])
 
 onMounted(() => {
   if (chess_canvas.value) {
     ctx.value = chess_canvas.value.getContext("2d")
+    ctx.value.strokeStyle = 'red'
   }
 })
 
@@ -50,6 +53,40 @@ const init = (image, imgWidth, imgHeight) => {
   ctx.value.clearRect(0,0,width,height)
   ctx.value.save()
   ctx.value.drawImage(image, 0, 0, imgWidth, imgHeight)
+}
+
+const handleCanvasClick = (e) => {
+  console.log(e)
+  const x = e.offsetX
+  const y = e.offsetY
+  points.value.push({ x, y })
+  drawPoints(x, y)
+}
+
+const drawPoints = (x, y) => {
+  ctx.value.beginPath()
+  ctx.value.arc(x, y, 2, 0, 360 * Math.PI / 180)
+  ctx.value.fillStyle = "red"
+  ctx.value.fill()
+  ctx.value.stroke()
+  ctx.value.closePath()
+  drawLines()
+}
+
+const drawLines = () => {
+  const len = points.value.length
+  if (len < 2) return
+
+  const startPoint = points.value[len - 2]
+  const endPoint = points.value[len - 1]
+  ctx.value.beginPath()
+  ctx.value.moveTo(startPoint.x, startPoint.y)
+  ctx.value.lineTo(endPoint.x, endPoint.y)
+  ctx.value.setLineDash([5, 5]);
+  ctx.value.strokeStyle = "blue";
+  ctx.value.lineWidth = 2;
+  ctx.value.stroke()
+  ctx.value.closePath()
 }
 
 </script>
