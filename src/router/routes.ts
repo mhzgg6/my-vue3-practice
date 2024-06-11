@@ -31,6 +31,14 @@ const routes = [
     path: "/cow",
     component: () => import("@/views/gluttonousSnakePlus/index.vue")
   },
+  {
+    path: "/tree",
+    component: () => import("@/views/tree/index.vue")
+  },
+  {
+    path: "/matting",
+    component: () => import("@/views/imageMatting/index.vue")
+  },
 ]
 
 export default routes;
