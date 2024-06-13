@@ -39,6 +39,10 @@ const routes = [
     path: "/matting",
     component: () => import("@/views/imageMatting/index.vue")
   },
+  {
+    path: "/runball",
+    component: () => import("@/views/runBall/index.vue")
+  },
 ]
 
 export default routes;
